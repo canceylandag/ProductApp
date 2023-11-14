@@ -9,4 +9,7 @@ interface ProductService {
 
     @GET("/products")
     suspend fun getList():Response<ProductModel>
+
+    @GET("/products/categories")
+    suspend fun getCaegories():Response<List<String>>
 }

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.canceylandag.productapp.R
+import com.canceylandag.productapp.adapter.CategoryAdapter
 import com.canceylandag.productapp.adapter.ViewAdapter
 import com.canceylandag.productapp.databinding.FragmentProductListBinding
 import com.canceylandag.productapp.model.Product
@@ -38,8 +39,11 @@ class ProductList : Fragment() {
 
     private val BASE_URL = "https://dummyjson.com"
     private var job : Job? = null
+    private var jobCategory : Job? = null
     var products:List<Product>?=null
     private lateinit var adapter: ViewAdapter
+    private lateinit var categoryAdapter: CategoryAdapter
+
     val exceptionHandler= CoroutineExceptionHandler { coroutineContext, throwable ->
         println("Error ${throwable.localizedMessage}")
     }
@@ -62,23 +66,32 @@ class ProductList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Drawer Kısmı
         val drawerLayout= binding.drawerLayout
         toggle = ActionBarDrawerToggle(activity,drawerLayout,R.string.open,R.string.close)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.navView.setNavigationItemSelectedListener {
+
+
+        /*binding.navView.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.mitem1->Toast.makeText(context,"Item1",Toast.LENGTH_LONG).show()
                 R.id.mitem2->Toast.makeText(context,"Item2",Toast.LENGTH_LONG).show()
                 R.id.mitem3->Toast.makeText(context,"Item3",Toast.LENGTH_LONG).show()
             }
             true
-        }
-
+        }*/
+        //RecyclerViewer
+        //Ürünler İçin
         val layoutManager:RecyclerView.LayoutManager=LinearLayoutManager(context)
+        //Drawerdaki Kategoriler için
+        val layoutManager2:RecyclerView.LayoutManager=LinearLayoutManager(context)
+
         binding.recyclerView.layoutManager=layoutManager
-        loadData()
+        binding.recyclerViewCategory.layoutManager=layoutManager2
+        loadCategories()
+        loadProductData()
 
 
     }
@@ -92,12 +105,7 @@ class ProductList : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun loadData(){
-        /*val retrofit= Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ProductService::class.java)*/
+    fun loadProductData(){
 
         val newRetro= RetrofitGeneric(BASE_URL,ProductService::class.java)
 
@@ -122,6 +130,24 @@ class ProductList : Fragment() {
 
         }
 
+    }
+
+    fun loadCategories(){
+
+        val categoryRetro=RetrofitGeneric(BASE_URL,ProductService::class.java)
+        jobCategory=CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val response = categoryRetro.retrofit.getCaegories()
+
+            withContext(Dispatchers.Main){
+                if (response.isSuccessful){
+                    response.body()?.let {
+                        categoryAdapter= CategoryAdapter(it)
+                        binding.recyclerViewCategory.adapter=categoryAdapter
+                    }
+
+                }
+            }
+        }
     }
 
 
