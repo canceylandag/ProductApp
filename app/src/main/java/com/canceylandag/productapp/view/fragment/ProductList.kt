@@ -2,8 +2,12 @@ package com.canceylandag.productapp.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +17,7 @@ import com.canceylandag.productapp.databinding.FragmentProductListBinding
 import com.canceylandag.productapp.model.Product
 import com.canceylandag.productapp.model.ProductModel
 import com.canceylandag.productapp.service.ProductService
+import com.canceylandag.productapp.service.RetrofitGeneric
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,8 +30,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
 private lateinit var binding:FragmentProductListBinding
-
+lateinit var toggle:ActionBarDrawerToggle
 private var productList: ProductModel?=null
+
 
 class ProductList : Fragment() {
 
@@ -40,6 +46,7 @@ class ProductList : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
     }
 
@@ -55,6 +62,20 @@ class ProductList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val drawerLayout= binding.drawerLayout
+        toggle = ActionBarDrawerToggle(activity,drawerLayout,R.string.open,R.string.close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.navView.setNavigationItemSelectedListener {
+            when(it.itemId){
+                R.id.mitem1->Toast.makeText(context,"Item1",Toast.LENGTH_LONG).show()
+                R.id.mitem2->Toast.makeText(context,"Item2",Toast.LENGTH_LONG).show()
+                R.id.mitem3->Toast.makeText(context,"Item3",Toast.LENGTH_LONG).show()
+            }
+            true
+        }
+
         val layoutManager:RecyclerView.LayoutManager=LinearLayoutManager(context)
         binding.recyclerView.layoutManager=layoutManager
         loadData()
@@ -62,16 +83,27 @@ class ProductList : Fragment() {
 
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        if (toggle.onOptionsItemSelected(item)){
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
     fun loadData(){
-        val retrofit= Retrofit.Builder()
+        /*val retrofit= Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(ProductService::class.java)
+            .create(ProductService::class.java)*/
+
+        val newRetro= RetrofitGeneric(BASE_URL,ProductService::class.java)
 
         job= CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
 
-            val response=retrofit.getList()
+            val response=newRetro.retrofit.getList()
 
             withContext(Dispatchers.Main){
 
