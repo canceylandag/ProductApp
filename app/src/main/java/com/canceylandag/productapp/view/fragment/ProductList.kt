@@ -5,14 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.canceylandag.productapp.R
+import com.canceylandag.productapp.adapter.ViewAdapter
 import com.canceylandag.productapp.databinding.FragmentProductListBinding
+import com.canceylandag.productapp.model.Product
 import com.canceylandag.productapp.model.ProductModel
 import com.canceylandag.productapp.service.ProductService
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
@@ -27,7 +32,8 @@ class ProductList : Fragment() {
 
     private val BASE_URL = "https://dummyjson.com"
     private var job : Job? = null
-
+    var products:List<Product>?=null
+    private lateinit var adapter: ViewAdapter
     val exceptionHandler= CoroutineExceptionHandler { coroutineContext, throwable ->
         println("Error ${throwable.localizedMessage}")
     }
@@ -49,7 +55,14 @@ class ProductList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val layoutManager:RecyclerView.LayoutManager=LinearLayoutManager(context)
+        binding.recyclerView.layoutManager=layoutManager
+        loadData()
 
+
+    }
+
+    fun loadData(){
         val retrofit= Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -66,8 +79,9 @@ class ProductList : Fragment() {
                     response.body()?.let { asd ->
                         productList= asd
 
-                        productList?.products?.forEach {
-                            println(it.title)
+                        productList?.products?.let {
+                            adapter= ViewAdapter(it)
+                            binding.recyclerView.adapter=adapter
                         }
                     }
                 }
@@ -76,6 +90,12 @@ class ProductList : Fragment() {
 
         }
 
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        job?.cancel()
     }
 
 }

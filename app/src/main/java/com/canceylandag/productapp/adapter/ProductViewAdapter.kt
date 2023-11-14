@@ -1,5 +1,6 @@
 package com.canceylandag.productapp.adapter
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.canceylandag.productapp.R
 import com.canceylandag.productapp.model.Product
 import com.canceylandag.productapp.model.ProductModel
+import com.squareup.picasso.Picasso
 
 class ViewAdapter(private var ProductList:List<Product>):RecyclerView.Adapter<ViewAdapter.ProductViewHolder>() {
 
@@ -30,7 +32,9 @@ class ViewAdapter(private var ProductList:List<Product>):RecyclerView.Adapter<Vi
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-        TODO("Not yet implemented")
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.single_row,parent,false)
+
+        return ProductViewHolder(view)
     }
 
     override fun getItemCount(): Int {
@@ -41,6 +45,7 @@ class ViewAdapter(private var ProductList:List<Product>):RecyclerView.Adapter<Vi
         holder.title?.text=ProductList[position].title
         holder.rating?.text=ProductList[position].rating.toString()
         holder.date?.text=ProductList[position].price.toString()
+        Picasso.get().load(ProductList[position].thumbnail).resize(500,500).centerCrop().into(holder.thumbnail);
 
     }
 
