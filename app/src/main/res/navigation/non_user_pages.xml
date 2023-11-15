@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/non_user_pages"
+    app:startDestination="@id/loginPage">
+
+    <fragment
+        android:id="@+id/loginPage"
+        android:name="com.canceylandag.productapp.view.fragment.nonUserPages.LoginPage"
+        android:label="LoginPage" >
+        <action
+            android:id="@+id/action_loginPage_to_signupPage"
+            app:destination="@id/signupPage" />
+    </fragment>
+    <fragment
+        android:id="@+id/signupPage"
+        android:name="com.canceylandag.productapp.view.fragment.nonUserPages.SignupPage"
+        android:label="SignupPage" >
+        <action
+            android:id="@+id/action_signupPage_to_loginPage"
+            app:destination="@id/loginPage" />
+    </fragment>
+</navigation>

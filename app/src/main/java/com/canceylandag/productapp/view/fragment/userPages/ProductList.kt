@@ -1,4 +1,4 @@
-package com.canceylandag.productapp.view.fragment
+package com.canceylandag.productapp.view.fragment.userPages
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -96,7 +96,7 @@ class ProductList : Fragment() {
 
                 if (response.isSuccessful){
                     response.body()?.let { asd ->
-                        productList= asd.products as MutableList<Product>
+                        productList = asd.products as MutableList<Product>
                         adapter= ViewAdapter(productList)
                         binding.recyclerView.adapter=adapter
 
@@ -117,7 +117,7 @@ class ProductList : Fragment() {
 
             withContext(Dispatchers.Main){
                 if (response.isSuccessful){
-                    categoryList=response.body() as MutableList<String>
+                    categoryList =response.body() as MutableList<String>
                     categoryList.add(0,"All")
                     categoryList?.let {
                         categoryAdapter= CategoryAdapter(categoryList){

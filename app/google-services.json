@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "759305451282",
+    "project_id": "ceylandag-sepeti",
+    "storage_bucket": "ceylandag-sepeti.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759305451282:android:8151eba29724dd781665cb",
+        "android_client_info": {
+          "package_name": "com.canceylandag.productapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByBzG229bhDkIW42xT7l3LWDb_jcR4RRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,4 +4,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="brand_text">Ceylandag Sepeti</string>
+    <string name="brand_desc">Kediler için alışveriş uygulaması.</string>
+    <string name="login_title">Giriş Yap</string>
+    <string name="signup_title">Kayıt Ol</string>
+    <string name="go_to_signup">Bir hesabın yok mu? Kayıt Ol.</string>
+    <string name="go_to_login">Bir hesabın var mı? Giriş Yap.</string>
+
 </resources>

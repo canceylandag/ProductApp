@@ -1,4 +1,4 @@
-package com.canceylandag.productapp.view.fragment
+package com.canceylandag.productapp.view.fragment.userPages
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
