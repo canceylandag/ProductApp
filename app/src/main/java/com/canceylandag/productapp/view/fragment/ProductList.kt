@@ -32,7 +32,9 @@ import retrofit2.create
 
 private lateinit var binding:FragmentProductListBinding
 lateinit var toggle:ActionBarDrawerToggle
-private var productList: ProductModel?=null
+private lateinit var productList: MutableList<Product>
+private lateinit var categoryList: MutableList<String>
+
 
 
 class ProductList : Fragment() {
@@ -40,7 +42,7 @@ class ProductList : Fragment() {
     private val BASE_URL = "https://dummyjson.com"
     private var job : Job? = null
     private var jobCategory : Job? = null
-    var products:List<Product>?=null
+    val globalRetro=RetrofitGeneric(BASE_URL,ProductService::class.java)
     private lateinit var adapter: ViewAdapter
     private lateinit var categoryAdapter: CategoryAdapter
 
@@ -74,14 +76,7 @@ class ProductList : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
-        /*binding.navView.setNavigationItemSelectedListener {
-            when(it.itemId){
-                R.id.mitem1->Toast.makeText(context,"Item1",Toast.LENGTH_LONG).show()
-                R.id.mitem2->Toast.makeText(context,"Item2",Toast.LENGTH_LONG).show()
-                R.id.mitem3->Toast.makeText(context,"Item3",Toast.LENGTH_LONG).show()
-            }
-            true
-        }*/
+
         //RecyclerViewer
         //Ürünler İçin
         val layoutManager:RecyclerView.LayoutManager=LinearLayoutManager(context)
@@ -96,33 +91,23 @@ class ProductList : Fragment() {
 
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        if (toggle.onOptionsItemSelected(item)){
-            return true
-        }
+    private fun loadProductData(){
 
-        return super.onOptionsItemSelected(item)
-    }
-
-    fun loadProductData(){
-
-        val newRetro= RetrofitGeneric(BASE_URL,ProductService::class.java)
 
         job= CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
 
-            val response=newRetro.retrofit.getList()
+            val response=globalRetro.retrofit.getList()
 
             withContext(Dispatchers.Main){
 
                 if (response.isSuccessful){
                     response.body()?.let { asd ->
-                        productList= asd
+                        productList= asd.products as MutableList<Product>
+                        adapter= ViewAdapter(productList)
+                        binding.recyclerView.adapter=adapter
 
-                        productList?.products?.let {
-                            adapter= ViewAdapter(it)
-                            binding.recyclerView.adapter=adapter
-                        }
+
                     }
                 }
 
@@ -132,16 +117,24 @@ class ProductList : Fragment() {
 
     }
 
-    fun loadCategories(){
+    private fun loadCategories(){
 
-        val categoryRetro=RetrofitGeneric(BASE_URL,ProductService::class.java)
         jobCategory=CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
-            val response = categoryRetro.retrofit.getCaegories()
+            val response = globalRetro.retrofit.getCaegories()
 
             withContext(Dispatchers.Main){
                 if (response.isSuccessful){
-                    response.body()?.let {
-                        categoryAdapter= CategoryAdapter(it)
+                    categoryList=response.body() as MutableList<String>
+                    categoryList.add(0,"All")
+                    categoryList?.let {
+                        categoryAdapter= CategoryAdapter(categoryList){
+                            if (it!="All"){
+                                loadProductsOfCategory(it)
+                            }else {
+                                loadProductData()
+                            }
+                            
+                        }
                         binding.recyclerViewCategory.adapter=categoryAdapter
                     }
 
@@ -150,6 +143,25 @@ class ProductList : Fragment() {
         }
     }
 
+    private fun loadProductsOfCategory(category:String){
+
+        job=CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val response = globalRetro.retrofit.getProductOfCategories(category)
+
+            withContext(Dispatchers.Main){
+                if (response.isSuccessful){
+                    response.body()?.let {
+                        productList.clear()
+                        productList.addAll(it.products as MutableList<Product>)
+                        adapter.notifyDataSetChanged()
+
+
+                    }
+
+                }
+            }
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.canceylandag.productapp.R
 
-class CategoryAdapter(private val CategoryList:List<String>):RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+class CategoryAdapter(private val CategoryList:List<String>,private val onItemClicked:(String)->Unit):RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
    class CategoryViewHolder(view: View):RecyclerView.ViewHolder(view){
        var category: TextView?=null;
@@ -28,6 +28,12 @@ class CategoryAdapter(private val CategoryList:List<String>):RecyclerView.Adapte
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         holder.category?.text=CategoryList[position]
+
+        holder.category?.setOnClickListener {
+            onItemClicked.invoke(CategoryList[position])
+        }
+
+
     }
 
 }
