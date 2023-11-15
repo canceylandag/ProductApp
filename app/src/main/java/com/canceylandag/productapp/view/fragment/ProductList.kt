@@ -2,10 +2,8 @@ package com.canceylandag.productapp.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -16,19 +14,14 @@ import com.canceylandag.productapp.adapter.CategoryAdapter
 import com.canceylandag.productapp.adapter.ViewAdapter
 import com.canceylandag.productapp.databinding.FragmentProductListBinding
 import com.canceylandag.productapp.model.Product
-import com.canceylandag.productapp.model.ProductModel
 import com.canceylandag.productapp.service.ProductService
 import com.canceylandag.productapp.service.RetrofitGeneric
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 private lateinit var binding:FragmentProductListBinding
 lateinit var toggle:ActionBarDrawerToggle
@@ -71,9 +64,9 @@ class ProductList : Fragment() {
         //Drawer Kısmı
         val drawerLayout= binding.drawerLayout
         toggle = ActionBarDrawerToggle(activity,drawerLayout,R.string.open,R.string.close)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
 
